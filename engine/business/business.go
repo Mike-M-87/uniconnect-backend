@@ -54,12 +54,18 @@ func FetchBusinessData(token, id string) (*model.Business, error) {
 }
 
 func FetchAllBusinesses(input model.FetchBusinessListInput) ([]*model.Business, error) {
-	_, err := engine.FetchUserByAuthToken(input.Token)
+	user, err := engine.FetchUserByAuthToken(input.Token)
 	if err != nil {
 		return nil, err
 	}
 
 	var businesses []models.Business
+
+	if input.Mine != nil && *input.Mine {
+		businesses = user.Businesses
+		goto returnData
+	}
+
 	if input.SearchTerm != nil {
 		businesses, err = engine.FetchBusinessesBySearchName(*input.SearchTerm)
 		if err != nil {

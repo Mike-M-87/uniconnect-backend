@@ -47,6 +47,7 @@ type FetchBusinessListInput struct {
 	Token      string        `json:"token"`
 	Type       *BusinessType `json:"type,omitempty"`
 	SearchTerm *string       `json:"searchTerm,omitempty"`
+	Mine       *bool         `json:"mine,omitempty"`
 }
 
 type LoginInput struct {

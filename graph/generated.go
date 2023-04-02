@@ -4399,7 +4399,7 @@ func (ec *executionContext) unmarshalInputFetchBusinessListInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"token", "type", "searchTerm"}
+	fieldsInOrder := [...]string{"token", "type", "searchTerm", "mine"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4427,6 +4427,14 @@ func (ec *executionContext) unmarshalInputFetchBusinessListInput(ctx context.Con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("searchTerm"))
 			it.SearchTerm, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "mine":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mine"))
+			it.Mine, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}

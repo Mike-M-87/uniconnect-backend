@@ -35,6 +35,7 @@ input FetchBusinessListInput {
   token:String!
   type:BusinessType
   searchTerm:String
+  mine:Boolean
 }
 
 type Business {

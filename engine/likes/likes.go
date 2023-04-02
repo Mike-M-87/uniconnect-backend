@@ -19,6 +19,15 @@ func AddBusinessLike(token, bizId string) (bool, error) {
 		return false, err
 	}
 
+	err = utils.DB.Model(&models.Likes{}).Where(&models.Likes{UserID: user.ID, BusinessID: uuid.FromStringOrNil(bizId)}).First(nil).Error
+	if err == nil {
+		err = utils.DB.Where(&models.Likes{UserID: user.ID, BusinessID: biz.ID}).Delete(&models.Likes{}).Error
+		if err != nil {
+			return false, err
+		}
+		return false, nil
+	}
+
 	newLike := models.Likes{
 		UserID:     user.ID,
 		BusinessID: biz.ID,
@@ -63,7 +72,7 @@ func CheckBusinessLiked(token, bizId string) (bool, error) {
 	}
 	err = utils.DB.Model(&models.Likes{}).Where(&models.Likes{UserID: user.ID, BusinessID: uuid.FromStringOrNil(bizId)}).First(nil).Error
 	if err != nil {
-		return false, err
+		return false, nil
 	}
 	return true, nil
 }
