@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"uniconnect/engine/business"
 	"uniconnect/engine/comments"
 	"uniconnect/engine/likes"
@@ -37,6 +36,26 @@ func (r *mutationResolver) PostComment(ctx context.Context, input model.PostComm
 // LikeBusiness is the resolver for the LikeBusiness field.
 func (r *mutationResolver) LikeBusiness(ctx context.Context, token string, bizID string) (bool, error) {
 	return likes.AddBusinessLike(token, bizID)
+}
+
+// DeleteBusiness is the resolver for the DeleteBusiness field.
+func (r *mutationResolver) DeleteBusiness(ctx context.Context, token string, bizID string) (bool, error) {
+	return business.DeleteMyBusiness(token, bizID)
+}
+
+// EditBusiness is the resolver for the EditBusiness field.
+func (r *mutationResolver) EditBusiness(ctx context.Context, input model.CreateBusinessInput, bizID string) (bool, error) {
+	return business.EditBusiness(input, bizID)
+}
+
+// ChangePassword is the resolver for the ChangePassword field.
+func (r *mutationResolver) ChangePassword(ctx context.Context, input model.ChangePasswordInput) (bool, error) {
+	return users.ChangePassword(input)
+}
+
+// VerifyUser is the resolver for the VerifyUser field.
+func (r *mutationResolver) VerifyUser(ctx context.Context, token string, otp string) (bool, error) {
+	return users.VerifyEmail(token, otp)
 }
 
 // FetchUserData is the resolver for the fetchUserData field.
@@ -82,13 +101,3 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *queryResolver) SearchBusiness(ctx context.Context, token string, searchTerm string) ([]*model.Business, error) {
-	panic(fmt.Errorf("not implemented: SearchBusiness - SearchBusiness"))
-}

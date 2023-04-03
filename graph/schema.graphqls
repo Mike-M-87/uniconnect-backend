@@ -18,8 +18,20 @@ type Mutation {
  CreateBusiness(input:CreateBusinessInput!):Boolean!
  PostComment(input:PostCommentInput!):Boolean!
  LikeBusiness(token:String!,bizId:String!):Boolean!
+ DeleteBusiness(token:String!,bizId:String!):Boolean!
+ EditBusiness(input:CreateBusinessInput!,bizId:String!):Boolean!
+ ChangePassword(input: ChangePasswordInput!): Boolean!
+ VerifyUser(token:String!,otp:String!):Boolean!
 }
 scalar Time
+
+
+input ChangePasswordInput {
+  token: String!
+  oldPassword: String!
+  newPassword: String!
+  confirmNewPassword: String!
+}
 
 input PostCommentInput {
   token:String!
@@ -48,6 +60,7 @@ type Business {
   contact:String!
   image:String!
   ownerName:String!
+  likes:String!
 }
 
 type Comment {

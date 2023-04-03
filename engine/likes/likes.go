@@ -25,15 +25,21 @@ func AddBusinessLike(token, bizId string) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+		err = utils.DB.Model(&models.Business{}).Where("id = ?", biz.ID).Update("like_count", biz.LikeCount-1).Error
+		if err != nil {
+			return false, err
+		}
 		return false, nil
 	}
-
 	newLike := models.Likes{
 		UserID:     user.ID,
 		BusinessID: biz.ID,
 	}
-
 	err = utils.DB.Create(&newLike).Error
+	if err != nil {
+		return false, err
+	}
+	err = utils.DB.Model(&models.Business{}).Where("id = ?", biz.ID).Update("like_count", biz.LikeCount+1).Error
 	if err != nil {
 		return false, err
 	}
@@ -46,11 +52,7 @@ func FetchAllLikedBusinesses(token string) ([]*model.Business, error) {
 		return nil, err
 	}
 
-	bizIds := make([]uuid.UUID, len(user.Likes))
-	for i, like := range user.Likes {
-		bizIds[i] = like.BusinessID
-	}
-	businesses, err := engine.FetchBusinessesByIds(bizIds)
+	businesses, err := engine.FetchLikes(user.ID)
 
 	// var businesses []models.Business
 	// err = utils.DB.Model(&models.Business{}).Joins("INNER JOIN likes ON likes.user_id = ? AND business.id = likes.business_id", user.ID).Scan(&businesses).Error

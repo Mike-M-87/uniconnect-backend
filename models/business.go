@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"uniconnect/graph/model"
 
 	uuid "github.com/satori/go.uuid"
@@ -17,11 +18,11 @@ type Business struct {
 	Location      string
 	Type          model.BusinessType
 	Image         string
-	Comments      []Comment `gorm:"foreignKey:BusinessID"`
+	LikeCount     int
 }
 
 type Likes struct {
-	UserID   uuid.UUID `gorm:"type:uuid"`
+	UserID     uuid.UUID `gorm:"type:uuid"`
 	BusinessID uuid.UUID `gorm:"type:uuid"`
 }
 
@@ -35,6 +36,7 @@ func (b Business) CreateToGraphData() *model.Business {
 		Website:     b.Website,
 		Contact:     b.Contact,
 		Image:       b.Image,
+		Likes:       fmt.Sprint(b.LikeCount),
 		OwnerName:   b.OwnerUserName,
 	}
 }

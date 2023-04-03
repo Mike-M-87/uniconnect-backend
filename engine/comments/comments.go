@@ -36,12 +36,13 @@ func FetchAllComments(token, bizId string) ([]*model.Comment, error) {
 	if err != nil {
 		return nil, err
 	}
-	biz, err := engine.FetchBusinessById(bizId)
+	comments, err := engine.FetchCommentsByBizId(bizId)
 	if err != nil {
 		return nil, err
 	}
-	gqlComments := make([]*model.Comment, len(biz.Comments))
-	for i, comment := range biz.Comments {
+	
+	gqlComments := make([]*model.Comment, len(comments))
+	for i, comment := range comments {
 		gqlComments[i] = comment.CreateToGraphData()
 	}
 	return gqlComments, nil

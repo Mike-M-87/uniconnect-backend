@@ -8,7 +8,6 @@ import (
 	"uniconnect/utils"
 
 	uuid "github.com/satori/go.uuid"
-	"gorm.io/gorm/clause"
 )
 
 var (
@@ -30,7 +29,7 @@ func FetchUser(cond *models.User, with_assoc bool) (*models.User, error) {
 	var user models.User
 	var err error
 	if with_assoc {
-		err = utils.DB.Preload(clause.Associations).Where(cond).First(&user).Error
+		err = utils.DB.Where(cond).First(&user).Error
 	} else {
 		err = utils.DB.Where(cond).First(&user).Error
 	}
@@ -42,11 +41,38 @@ func FetchUser(cond *models.User, with_assoc bool) (*models.User, error) {
 
 func FetchBusinessById(id string) (*models.Business, error) {
 	var biz models.Business
-	err := utils.DB.Preload(clause.Associations).Where("id = ?", id).First(&biz).Error
+	err := utils.DB.Where("id = ?", id).First(&biz).Error
 	if err != nil {
 		return nil, err
 	}
 	return &biz, nil
+}
+
+func FetchLikes(userId uuid.UUID)([]models.Business,error){
+	var business []models.Business
+	err := utils.DB.Model(&models.Business{}).Joins("INNER JOIN likes ON likes.user_id = ? AND businesses.id = likes.business_id", userId).Scan(&business).Error
+	if err != nil {
+		return nil, err
+	}
+	return business,nil
+}
+
+func FetchUserBusiness(userId uuid.UUID)([]models.Business,error){
+	var business []models.Business
+	err := utils.DB.Where(&models.Business{UserID: userId}).Find(&business).Error
+	if err != nil {
+		return nil, err
+	}
+	return business,nil
+}
+
+func FetchCommentsByBizId(id string) ([]models.Comment, error) {
+	var comms []models.Comment
+	err := utils.DB.Where("business_id = ?", id).Order("date_sent desc").Find(&comms).Error
+	if err != nil {
+		return nil, err
+	}
+	return comms, nil
 }
 
 func FetchBusinessesByIds(ids []uuid.UUID) ([]models.Business, error) {
@@ -94,7 +120,7 @@ func FetchUserByAuthToken(jwt string) (*models.User, error) {
 
 func FetchUserByID(id string) (*models.User, error) {
 	var user models.User
-	err := utils.DB.Preload(clause.Associations).Where("id = ?", id).First(&user).Error
+	err := utils.DB.Where("id = ?", id).First(&user).Error
 	if err != nil {
 		return nil, err
 	}

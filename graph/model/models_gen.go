@@ -23,6 +23,14 @@ type Business struct {
 	Contact     string       `json:"contact"`
 	Image       string       `json:"image"`
 	OwnerName   string       `json:"ownerName"`
+	Likes       string       `json:"likes"`
+}
+
+type ChangePasswordInput struct {
+	Token              string `json:"token"`
+	OldPassword        string `json:"oldPassword"`
+	NewPassword        string `json:"newPassword"`
+	ConfirmNewPassword string `json:"confirmNewPassword"`
 }
 
 type Comment struct {

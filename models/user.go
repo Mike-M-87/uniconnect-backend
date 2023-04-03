@@ -10,8 +10,6 @@ type User struct {
 	UserName     string
 	ProfilePhoto string
 	Verified     bool
-	Businesses   []Business `gorm:"foreignKey:UserID"`
-	Likes        []Likes    `gorm:"foreignKey:UserID"`
 }
 
 func (u User) CreateToGraphData() *model.User {
